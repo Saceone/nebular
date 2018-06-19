@@ -11,16 +11,18 @@ export class NgdAnalytics {
   private enabled: boolean;
 
   constructor(@Inject(NB_WINDOW) private window,
-              private _location: Location,
-              private _router: Router) {
+              private location: Location,
+              private router: Router) {
     this.enabled = this.window.location.href.indexOf('akveo.github.io') >= 0;
   }
 
   trackPageViews() {
     if (this.enabled) {
-      filter.call(this._router.events, (event) => event instanceof NavigationEnd)
+      this.router.events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+      )
         .subscribe(() => {
-          ga('send', { hitType: 'pageview', page: this._location.path() });
+          ga('send', {hitType: 'pageview', page: this.location.path()});
         });
     }
   }
