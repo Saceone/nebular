@@ -7,21 +7,27 @@ import { NB_WINDOW } from '@nebular/theme';
 declare const ga: any;
 
 @Injectable()
-export class Analytics {
-  private _enabled: boolean;
+export class NgdAnalytics {
+  private enabled: boolean;
 
   constructor(@Inject(NB_WINDOW) private window,
               private _location: Location,
               private _router: Router) {
-    this._enabled = this.window.location.href.indexOf('akveo.github.io') >= 0;
+    this.enabled = this.window.location.href.indexOf('akveo.github.io') >= 0;
   }
 
   trackPageViews() {
-    if (this._enabled) {
+    if (this.enabled) {
       filter.call(this._router.events, (event) => event instanceof NavigationEnd)
         .subscribe(() => {
-          ga('send', {hitType: 'pageview', page: this._location.path()});
+          ga('send', { hitType: 'pageview', page: this._location.path() });
         });
+    }
+  }
+
+  trackEvent(eventName: string, eventVal: string = '') {
+    if (this.enabled) {
+      ga('send', 'event', eventName, eventVal);
     }
   }
 }
